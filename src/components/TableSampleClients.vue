@@ -1,6 +1,5 @@
 <script setup>
-import { computed, ref } from "vue";
-import { useMainStore } from "@/stores/main";
+import { computed, ref, onMounted } from "vue";
 import { mdiEye, mdiTrashCan } from "@mdi/js";
 import CardBoxModal from "@/components/CardBoxModal.vue";
 import TableCheckboxCell from "@/components/TableCheckboxCell.vue";
@@ -8,15 +7,24 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import UserAvatar from "@/components/UserAvatar.vue";
+import { useMainStore } from "@/stores/main.js";
 
 defineProps({
   checkable: Boolean,
 });
 
-const mainStore = useMainStore();
-
-const items = computed(() => mainStore.clients);
-
+const items = ref([]);
+const store = useMainStore();
+onMounted(() => {
+  store
+    .fetchItems()
+    .then(() => {
+      items.value = store.clients; // Cập nhật dữ liệu
+    })
+    .catch((error) => {
+      console.error("Error fetching data:", error);
+    });
+});
 const isModalActive = ref(false);
 
 const isModalDangerActive = ref(false);
@@ -102,12 +110,12 @@ const checked = (isChecked, client) => {
     <thead>
       <tr>
         <th v-if="checkable" />
-        <th />
-        <th>Name</th>
-        <th>Company</th>
-        <th>City</th>
-        <th>Progress</th>
-        <th>Created</th>
+        <th>Avatar</th>
+        <th>Tài khoản</th>
+        <th>Họ và Tên</th>
+        <th>Email</th>
+        <th>Phòng Ban</th>
+        <th>Trạng Thái</th>
         <th />
       </tr>
     </thead>
@@ -123,31 +131,22 @@ const checked = (isChecked, client) => {
             class="w-24 h-24 mx-auto lg:w-6 lg:h-6"
           />
         </td>
+        <td data-label="Usersname">
+          {{ client.username }}
+        </td>
         <td data-label="Name">
           {{ client.name }}
         </td>
-        <td data-label="Company">
-          {{ client.company }}
+        <td data-label="Email">
+          {{ client.email }}
         </td>
-        <td data-label="City">
-          {{ client.city }}
+        <td data-label="Departments">
+          {{ client.departments }}
         </td>
-        <td data-label="Progress" class="lg:w-32">
-          <progress
-            class="flex w-2/5 self-center lg:w-full"
-            max="100"
-            :value="client.progress"
-          >
-            {{ client.progress }}
-          </progress>
+        <td data-label="Status">
+          {{ client.status }}
         </td>
-        <td data-label="Created" class="lg:w-1 whitespace-nowrap">
-          <small
-            class="text-gray-500 dark:text-slate-400"
-            :title="client.created"
-            >{{ client.created }}</small
-          >
-        </td>
+
         <td class="before:hidden lg:w-1 whitespace-nowrap">
           <BaseButtons type="justify-start lg:justify-end" no-wrap>
             <BaseButton

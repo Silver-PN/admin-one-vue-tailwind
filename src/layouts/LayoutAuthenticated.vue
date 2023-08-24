@@ -12,12 +12,11 @@ import NavBar from "@/components/NavBar.vue";
 import NavBarItemPlain from "@/components/NavBarItemPlain.vue";
 import AsideMenu from "@/components/AsideMenu.vue";
 import FooterBar from "@/components/FooterBar.vue";
-
+import avatar from "../static/Logo.jpg";
 useMainStore().setUser({
-  name: "John Doe",
-  email: "john@example.com",
-  avatar:
-    "https://avatars.dicebear.com/api/avataaars/example.svg?options[top][]=shortHair&options[accessoriesChance]=93",
+  name: "Silver",
+  email: "silver@gmail.com",
+  avatar: avatar,
 });
 
 const layoutAsidePadding = "xl:pl-60";
@@ -81,7 +80,7 @@ const menuClick = (event, item) => {
         </NavBarItemPlain>
         <NavBarItemPlain use-margin>
           <FormControl
-            placeholder="Search (ctrl+k)"
+            placeholder="Search"
             ctrl-k-focus
             transparent
             borderless

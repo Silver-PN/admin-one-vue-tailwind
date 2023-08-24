@@ -40,5 +40,14 @@ export const useMainStore = defineStore("main", {
           alert(error.message);
         });
     },
+
+    async fetchItems() {
+      try {
+        const response = await axios.get("http://127.0.0.1:8000/api/users");
+        this.clients = response.data; // Cập nhật state clients
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    },
   },
 });
