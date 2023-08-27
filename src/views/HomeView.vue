@@ -36,7 +36,7 @@ onMounted(() => {
 
 const mainStore = useMainStore();
 
-const clientBarItems = computed(() => mainStore.clients.slice(0, 4));
+// const clientBarItems = computed(() => mainStore.clients.slice(0, 4));
 
 const transactionBarItems = computed(() => mainStore.history);
 </script>
@@ -103,14 +103,14 @@ const transactionBarItems = computed(() => mainStore.history);
           />
         </div>
         <div class="flex flex-col justify-between">
-          <CardBoxClient
+          <!-- <CardBoxClient
             v-for="client in clientBarItems"
             :key="client.id"
             :name="client.name"
             :login="client.login"
             :date="client.created"
             :progress="client.progress"
-          />
+          /> -->
         </div>
       </div>
 

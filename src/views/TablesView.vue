@@ -30,7 +30,7 @@ import CardBoxComponentEmpty from "@/components/CardBoxComponentEmpty.vue";
         />
       </SectionTitleLineWithButton>
       <NotificationBar color="info" :icon="mdiMonitorCellphone">
-        <b>Responsive table.</b> Collapses on mobile
+        <b>Thêm chức năng add,edit,search user</b>
       </NotificationBar>
 
       <CardBox class="mb-6" has-table>

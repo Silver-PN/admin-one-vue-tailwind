@@ -20,9 +20,9 @@ const mainStore = useMainStore(pinia);
 const styleStore = useStyleStore(pinia);
 
 /* Fetch sample data */
+//
 mainStore.fetch("clients");
-mainStore.fetch("history");
-
+// mainStore.fetch("history");
 /* App style */
 styleStore.setStyle(localStorage[styleKey] ?? "basic");
 
@@ -36,11 +36,11 @@ if (
 }
 
 /* Default title tag */
-const defaultDocumentTitle = "Admin One Vue 3 Tailwind";
+const defaultDocumentTitle = "Silver";
 
 /* Set document title from route meta */
 router.afterEach((to) => {
   document.title = to.meta?.title
-    ? `${to.meta.title} — ${defaultDocumentTitle}`
+    ? `${to.meta.title} by ${defaultDocumentTitle}`
     : defaultDocumentTitle;
 });
