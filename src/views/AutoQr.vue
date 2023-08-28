@@ -17,6 +17,10 @@ const generateQrCodeForUser = async (userId) => {
   qrCode.value = formattedJson.replace(/,/g, "\n");
 };
 generateQrCodeForUser(store.$state.userid);
+// const openLink = () => {
+//   // window.location.href = this.qrValue;
+//   alert(qrCode.value);
+// };
 </script>
 
 <template>
@@ -35,6 +39,17 @@ generateQrCodeForUser(store.$state.userid);
         <img class="qrcode__image" src="../static/Glogo.png" alt="Silver" />
       </figure>
     </div>
+    <!-- <div class="button">
+      <BaseButton
+        @click="openLink"
+        target="_blank"
+        :icon="mdiGithub"
+        label="Infomation"
+        color="contrast"
+        rounded-full
+        small
+      />
+    </div> -->
   </LayoutAuthenticated>
 </template>
 
@@ -44,6 +59,12 @@ generateQrCodeForUser(store.$state.userid);
   justify-content: center;
   align-items: center;
 }
+/* .button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 10vh; 
+} */
 .qrcode {
   display: inline-block;
   font-size: 0;

@@ -29,7 +29,9 @@ const submit = async () => {
   if (response.message == "Đăng nhập thành công") {
     store.setUser(response.user);
     // localStorage.setItem("user", JSON.stringify(response.user));
-    // console.log(localStorage);
+    // console.log(localStorage.getItem("user"));
+    // store.getUser();
+
     router.push("/dashboard");
   }
 };
