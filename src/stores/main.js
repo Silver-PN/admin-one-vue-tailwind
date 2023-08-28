@@ -4,6 +4,7 @@ import axios from "axios";
 export const useMainStore = defineStore("main", {
   state: () => ({
     /* User */
+    userid: null,
     userName: null,
     userEmail: null,
     userAvatar: null,
@@ -17,8 +18,11 @@ export const useMainStore = defineStore("main", {
   }),
   actions: {
     setUser(payload) {
+      if (payload.id) {
+        this.userid = payload.id;
+      }
       if (payload.name) {
-        this.userName = payload.name;
+        this.userName = payload.username;
       }
       if (payload.email) {
         this.userEmail = payload.email;
@@ -39,15 +43,6 @@ export const useMainStore = defineStore("main", {
         .catch((error) => {
           alert(error.message);
         });
-    },
-
-    async fetchItems() {
-      try {
-        const response = await axios.get("http://127.0.0.1:8000/api/users");
-        this.clients = response.data; // Cập nhật state clients
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
     },
   },
 });

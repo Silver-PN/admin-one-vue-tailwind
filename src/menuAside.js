@@ -50,8 +50,8 @@ export default [
     icon: mdiAccountCircle,
   },
   {
-    to: "/login",
-    label: "Login",
+    to: "/loginbyqr",
+    label: "QR Login",
     icon: mdiLock,
   },
   {

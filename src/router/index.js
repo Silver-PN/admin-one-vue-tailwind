@@ -71,6 +71,14 @@ const routes = [
   },
   {
     meta: {
+      title: "LoginByQR",
+    },
+    path: "/loginbyqr",
+    name: "loginbyqr",
+    component: () => import("@/views/LoginByQR.vue"),
+  },
+  {
+    meta: {
       title: "Error",
     },
     path: "/error",

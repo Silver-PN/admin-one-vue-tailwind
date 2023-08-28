@@ -1,6 +1,7 @@
 <script setup>
 import { reactive } from "vue";
-import { useRouter } from "vue-router";
+import { useUserStore } from "@/stores/user.js";
+import { useMainStore } from "@/stores/main.js";
 import { mdiAccount, mdiAsterisk } from "@mdi/js";
 import SectionFullScreen from "@/components/SectionFullScreen.vue";
 import CardBox from "@/components/CardBox.vue";
@@ -10,17 +11,27 @@ import FormControl from "@/components/FormControl.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import LayoutGuest from "@/layouts/LayoutGuest.vue";
+import router from "@/router/index.js";
 
 const form = reactive({
   login: "",
   pass: "",
-  remember: true,
+  remember: false,
 });
 
-const router = useRouter();
-
-const submit = () => {
-  router.push("/dashboard");
+const userStore = useUserStore();
+const store = useMainStore();
+const submit = async () => {
+  const response = await userStore.loginUser({
+    username: form.login,
+    password: form.pass,
+  });
+  if (response.message == "Đăng nhập thành công") {
+    store.setUser(response.user);
+    // localStorage.setItem("user", JSON.stringify(response.user));
+    // console.log(localStorage);
+    router.push("/dashboard");
+  }
 };
 </script>
 

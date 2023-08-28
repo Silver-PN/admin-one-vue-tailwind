@@ -14,9 +14,9 @@ import AsideMenu from "@/components/AsideMenu.vue";
 import FooterBar from "@/components/FooterBar.vue";
 import avatar from "../static/Logo.jpg";
 useMainStore().setUser({
-  name: "Silver",
-  email: "silver@gmail.com",
-  avatar: avatar,
+  name: "",
+  email: "",
+  avatar: "",
 });
 
 const layoutAsidePadding = "xl:pl-60";
@@ -96,13 +96,13 @@ const menuClick = (event, item) => {
       />
       <slot />
       <FooterBar>
-        Get more with
+        <!-- Get more with
         <a
           href="https://tailwind-vue.justboil.me/"
           target="_blank"
           class="text-blue-600"
           >Premium version</a
-        >
+        > -->
       </FooterBar>
     </div>
   </div>

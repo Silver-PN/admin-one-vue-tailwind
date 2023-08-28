@@ -95,7 +95,6 @@ const generateQrCodeForUser = async (userId) => {
   const jsonString = JSON.stringify(response);
 
   qrCode.value = jsonString;
-  console.log(qrCode.value);
 };
 </script>
 
@@ -114,6 +113,8 @@ const generateQrCodeForUser = async (userId) => {
     <figure class="qrcode">
       <VueQRCode
         :value="qrCode"
+        :type="'image/png'"
+        :color="{ dark: '#FFFFFF', light: '#FFA500' }"
         tag="png"
         :options="{
           width: 200,
