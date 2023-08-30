@@ -7,12 +7,15 @@ import UserAvatarCurrentUser from "@/components/UserAvatarCurrentUser.vue";
 import CardBox from "@/components/CardBox.vue";
 import FormCheckRadio from "@/components/FormCheckRadio.vue";
 import PillTag from "@/components/PillTag.vue";
-
-const mainStore = useMainStore();
-
-const userName = computed(() => mainStore.userName);
+import localS from "@/util/localS";
+const userDataJSON = localS.getItem("user");
+const userData = JSON.parse(userDataJSON);
+const userName = ref(userData.name);
 
 const userSwitchVal = ref(false);
+// const updateUsername = () => {
+//   userName.value = "NewUsername";
+// };
 </script>
 
 <template>
@@ -30,10 +33,11 @@ const userSwitchVal = ref(false);
           />
         </div>
         <h1 class="text-2xl">
-          Howdy, <b>{{ userName }}</b
-          >!
+          Moshi Moshi, <b>{{ userName }}</b>
+          <br />
+          (⁠づ⁠￣⁠ ⁠³⁠￣⁠)⁠づ
         </h1>
-        <p>Last login <b>12 mins ago</b> from <b>127.0.0.1</b></p>
+        <p>Last login <b>1000 years ago</b> from <b>127.0.0.0.0</b></p>
         <div class="flex justify-center md:block">
           <PillTag label="Verified" color="info" :icon="mdiCheckDecagram" />
         </div>

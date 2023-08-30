@@ -25,5 +25,14 @@ export const useUserStore = defineStore("user", {
         throw error;
       }
     },
+
+    updateUser: async (userId, updateData) => {
+      const repqr = await sent(
+        `/api/update-user/${userId}`,
+        "POST",
+        updateData
+      );
+      return repqr.data;
+    },
   },
 });

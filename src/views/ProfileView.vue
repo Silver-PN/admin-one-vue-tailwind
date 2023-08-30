@@ -1,6 +1,5 @@
 <script setup>
 import { reactive } from "vue";
-import { useMainStore } from "@/stores/main";
 import {
   mdiAccount,
   mdiMail,
@@ -19,12 +18,16 @@ import BaseButtons from "@/components/BaseButtons.vue";
 import UserCard from "@/components/UserCard.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
+import localS from "@/util/localS";
+import { useUserStore } from "@/stores/user.js";
 
-const mainStore = useMainStore();
+const userDataJSON = localS.getItem("user");
+const userData = JSON.parse(userDataJSON);
+const userStore = useUserStore();
 
 const profileForm = reactive({
-  name: mainStore.userName,
-  email: mainStore.userEmail,
+  name: userData.name,
+  email: userData.email,
 });
 
 const passwordForm = reactive({
@@ -33,8 +36,22 @@ const passwordForm = reactive({
   password_confirmation: "",
 });
 
-const submitProfile = () => {
-  mainStore.setUser(profileForm);
+const submitProfile = async () => {
+  if (userData) {
+    // Chỉ cập nhật các thuộc tính mới trong profileForm
+    if (profileForm.name) userData.name = profileForm.name;
+    if (profileForm.email) userData.email = profileForm.email;
+    // if (profileForm.email) userData.avatar = profileForm.avatar;
+
+    // Lưu dữ liệu người dùng đã cập nhật vào localStorage
+    localS.setItem("user", JSON.stringify(userData));
+
+    // Lưu dữ liệu người dùng đã cập nhật vào db
+    const response = await userStore.updateUser(userData.id, userData);
+    console.log(response.message);
+  } else {
+    console.log("Không tìm thấy thông tin người dùng.");
+  }
 };
 
 const submitPass = () => {

@@ -4,10 +4,11 @@ import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import VueQRCode from "vue-qrcode";
 import BaseButton from "@/components/BaseButton.vue";
 import { useUserStore } from "@/stores/user.js";
-import { useMainStore } from "@/stores/main.js";
+import localS from "@/util/localS";
+// import { useMainStore } from "@/stores/main.js";
 
 const qrCode = ref("Vui Lòng Đăng nhập để sử dụng chức năng này!!!");
-const store = useMainStore();
+// const store = useMainStore();
 const userStore = useUserStore();
 
 const generateQrCodeForUser = async (userId) => {
@@ -16,7 +17,14 @@ const generateQrCodeForUser = async (userId) => {
   const formattedJson = jsonString.replace(/"/g, " ").replace(/[{}[\]]/g, "");
   qrCode.value = formattedJson.replace(/,/g, "\n");
 };
-generateQrCodeForUser(store.$state.userid);
+const userDataJSON = localS.getItem("user");
+
+// Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+const userData = JSON.parse(userDataJSON);
+onMounted(() => {
+  generateQrCodeForUser(userData.id);
+});
+generateQrCodeForUser(userData.id);
 </script>
 
 <template>

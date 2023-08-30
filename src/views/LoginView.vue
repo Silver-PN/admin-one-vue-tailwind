@@ -12,7 +12,7 @@ import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import LayoutGuest from "@/layouts/LayoutGuest.vue";
 import router from "@/router/index.js";
-
+import localS from "@/util/localS.js";
 const form = reactive({
   login: "",
   pass: "",
@@ -20,17 +20,27 @@ const form = reactive({
 });
 
 const userStore = useUserStore();
-const store = useMainStore();
 const submit = async () => {
   const response = await userStore.loginUser({
     username: form.login,
     password: form.pass,
   });
   if (response.message == "Đăng nhập thành công") {
-    store.setUser(response.user);
-    // localStorage.setItem("user", JSON.stringify(response.user));
-    // console.log(localStorage.getItem("user"));
-    // store.getUser();
+    // store.setUser(response.user);
+    // setItem("user", response.user);
+    localS.setItem("user", JSON.stringify(response.user));
+    // Lấy dữ liệu từ localStorage
+    // const userDataJSON = localS.getItem("user");
+
+    // // Chuyển đổi chuỗi JSON thành đối tượng JavaScript
+    // const userData = JSON.parse(userDataJSON);
+
+    // // Truy cập thuộc tính "id" của đối tượng
+    // if (userData && userData.id) {
+    //   console.log(userData.id);
+    // } else {
+    //   console.log("Không tìm thấy thông tin người dùng hoặc thuộc tính id.");
+    // }
 
     router.push("/dashboard");
   }
