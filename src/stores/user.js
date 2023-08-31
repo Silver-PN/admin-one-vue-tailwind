@@ -7,6 +7,10 @@ export const useUserStore = defineStore("user", {
       const rep = await sent("/api/users", "GET");
       return rep.data;
     },
+    listStatus: async () => {
+      const rep = await sent("/api/status", "GET");
+      return rep.data;
+    },
 
     userQr: async (userId) => {
       const repqr = await sent(`/api/users/${userId}/qrcode`, "GET");

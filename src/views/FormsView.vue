@@ -14,16 +14,40 @@ import SectionTitle from "@/components/SectionTitle.vue";
 import LayoutAuthenticated from "@/layouts/LayoutAuthenticated.vue";
 import SectionTitleLineWithButton from "@/components/SectionTitleLineWithButton.vue";
 import NotificationBarInCard from "@/components/NotificationBarInCard.vue";
+import localS from "@/util/localS";
+import { useUserStore } from "@/stores/user";
+// Lay Data tu localStorage
+const userDataJSON = localS.getItem("user");
+const userData = JSON.parse(userDataJSON);
+// Lay Data tu userStore
+const userStore = useUserStore();
+// Giả sử dữ liệu trả về từ API là một mảng chứa các trạng thái
+const selectOptions = ref([]);
 
-const selectOptions = [
-  { id: 1, label: "Business development" },
-  { id: 2, label: "Marketing" },
-  { id: 3, label: "Sales" },
-];
+// Fetch data from the API using the userStore and populate selectOptions
+userStore
+  .listStatus()
+  .then((data) => {
+    const uniqueStatuses = {};
+
+    data.forEach((item) => {
+      if (!uniqueStatuses[item.id]) {
+        uniqueStatuses[item.id] = item.status;
+      }
+    });
+
+    selectOptions.value = Object.keys(uniqueStatuses).map((id) => ({
+      id,
+      label: uniqueStatuses[id],
+    }));
+  })
+  .catch((error) => {
+    console.error("Error fetching data:", error);
+  });
 
 const form = reactive({
-  name: "John Doe",
-  email: "john.doe@example.com",
+  name: userData.name,
+  email: userData.email,
   phone: "",
   department: selectOptions[0],
   subject: "",

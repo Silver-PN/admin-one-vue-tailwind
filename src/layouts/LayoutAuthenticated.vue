@@ -13,11 +13,6 @@ import NavBarItemPlain from "@/components/NavBarItemPlain.vue";
 import AsideMenu from "@/components/AsideMenu.vue";
 import FooterBar from "@/components/FooterBar.vue";
 import avatar from "../static/Logo.jpg";
-useMainStore().setUser({
-  name: "",
-  email: "",
-  avatar: "",
-});
 
 const layoutAsidePadding = "xl:pl-60";
 
@@ -39,7 +34,10 @@ const menuClick = (event, item) => {
   }
 
   if (item.isLogout) {
-    //
+    localStorage.removeItem("lastLogin");
+    localStorage.removeItem("user");
+
+    router.push("/login");
   }
 };
 </script>

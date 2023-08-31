@@ -29,6 +29,8 @@ const submit = async () => {
     // store.setUser(response.user);
     // setItem("user", response.user);
     localS.setItem("user", JSON.stringify(response.user));
+    localS.setItem("lastLogin", JSON.stringify(response.lastLogin));
+
     // Lấy dữ liệu từ localStorage
     // const userDataJSON = localS.getItem("user");
 
