@@ -1,15 +1,14 @@
 import { createRouter, createWebHashHistory } from "vue-router";
-import Style from "@/views/StyleView.vue";
 import Home from "@/views/HomeView.vue";
 
 const routes = [
   {
     meta: {
-      title: "Select style",
+      title: "Home",
     },
     path: "/",
-    name: "style",
-    component: Style,
+    name: "home",
+    component: Home,
   },
   {
     // Document title tag
@@ -75,7 +74,7 @@ const routes = [
     },
     path: "/loginbyqr",
     name: "loginbyqr",
-    component: () => import("@/views/LoginByQR.vue"),
+    component: () => import("@/views/LoginView.vue"),
   },
   {
     meta: {

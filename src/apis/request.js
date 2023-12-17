@@ -1,5 +1,5 @@
 import axios from "axios";
-const HOST = "http://127.0.0.1:8000";
+const HOST = "http://localhost:3000/query";
 export const sent = async (route, method, data = null) => {
   try {
     const config = {
