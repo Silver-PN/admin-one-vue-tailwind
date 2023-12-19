@@ -1,5 +1,5 @@
 <script setup>
-import { computed } from "vue";
+import { computed, ref } from "vue";
 import { mdiClose } from "@mdi/js";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -56,13 +56,19 @@ const confirmCancel = (mode) => {
 const sleep = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
+const isSaveButtonClicked = ref(false);
+
 const deleteItem = async () => {
-  const jsonData = setBranchData();
-  const rep = await branchStore.deleteTodoList(jsonData);
-  if (rep.data.status == "success") {
-    value.value = false;
-    await sleep(3000);
-    emit("delete");
+  if (!isSaveButtonClicked.value) {
+    isSaveButtonClicked.value = true;
+    const jsonData = setBranchData();
+    const rep = await branchStore.deleteTodoList(jsonData);
+    if (rep.data.status == "success") {
+      await sleep(3000);
+      value.value = false;
+      emit("delete");
+    }
+    isSaveButtonClicked.value = false;
   }
 };
 

@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, reactive, ref } from "vue";
 import { mdiClose } from "@mdi/js";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -10,38 +10,7 @@ import FormField from "./FormField.vue";
 import FormControl from "./FormControl.vue";
 import { useContractStore } from "@/stores/contract";
 import { v4 as uuidv4 } from "uuid";
-import { useToast } from "vue-toastification";
-const toast = useToast();
-const showNotification = (message, type) => {
-  const options = {
-    position: "top-center",
-    timeout: 3000,
-    closeOnClick: true,
-    pauseOnFocusLoss: true,
-    pauseOnHover: true,
-    draggable: true,
-    draggablePercent: 0.6,
-    showCloseButtonOnHover: false,
-    hideProgressBar: true,
-    closeButton: "button",
-    icon: true,
-    rtl: false,
-  };
 
-  switch (type) {
-    case "success":
-      toast.success(message, options);
-      break;
-    case "error":
-      toast.error(message, options);
-      break;
-    case "warning":
-      toast.warning(message, options);
-      break;
-    default:
-      break;
-  }
-};
 const branchStore = useContractStore();
 
 const priority = [
@@ -101,19 +70,24 @@ const value = computed({
 const sleep = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
+const isSaveButtonClicked = ref(false);
+
 const confirmCancel = async (mode) => {
-  if (mode == "confirm") {
-    const jsonData = setBranchData(selectedValues);
-    const rep = await branchStore.createTodoList(jsonData);
-    if (rep.data.status == "success") {
+  if (!isSaveButtonClicked.value) {
+    isSaveButtonClicked.value = true;
+    if (mode == "confirm") {
+      const jsonData = setBranchData(selectedValues);
+      const rep = await branchStore.createTodoList(jsonData);
+      if (rep.data.status == "success") {
+        await sleep(3000);
+        value.value = false;
+        emit(mode);
+      }
+    } else {
       value.value = false;
-      await sleep(3000);
-      showNotification("Tạo nhân viên mới thành công!!!", "success");
       emit(mode);
     }
-  } else {
-    value.value = false;
-    emit(mode);
+    isSaveButtonClicked.value = false;
   }
 };
 

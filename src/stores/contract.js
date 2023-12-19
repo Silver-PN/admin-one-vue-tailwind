@@ -32,6 +32,20 @@ export const useContractStore = defineStore("contract", {
         throw error;
       }
     },
+    searchTodoList: async (Data) => {
+      try {
+        const response = await sent(
+          "/search",
+          "POST",
+          Data,
+          "'Content-Type': 'application/json'"
+        );
+        return response;
+      } catch (error) {
+        console.error("Lỗi khi thêm mới:", error);
+        throw error;
+      }
+    },
     updateTodoList: async (Data) => {
       try {
         const response = await sent(

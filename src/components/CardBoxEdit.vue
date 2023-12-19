@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive, watch } from "vue";
+import { computed, reactive, watch, ref } from "vue";
 import { mdiClose } from "@mdi/js";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -76,18 +76,24 @@ const value = computed({
 const sleep = (milliseconds) => {
   return new Promise((resolve) => setTimeout(resolve, milliseconds));
 };
+const isSaveButtonClicked = ref(false);
+
 const confirmCancel = async (mode) => {
-  if (mode == "confirm") {
-    const jsonData = setBranchData(selectedValues);
-    const rep = await branchStore.updateTodoList(jsonData);
-    if (rep.data.status == "success") {
+  if (!isSaveButtonClicked.value) {
+    isSaveButtonClicked.value = true;
+    if (mode == "confirm") {
+      const jsonData = setBranchData(selectedValues);
+      const rep = await branchStore.updateTodoList(jsonData);
+      if (rep.data.status == "success") {
+        await sleep(3000);
+        value.value = false;
+        emit(mode);
+      }
+    } else {
       value.value = false;
-      await sleep(3000);
       emit(mode);
     }
-  } else {
-    value.value = false;
-    emit(mode);
+    isSaveButtonClicked.value = false;
   }
 };
 

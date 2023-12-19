@@ -15,7 +15,6 @@ import {
 import CardBoxModal from "./CardBoxModal.vue";
 import CardBoxEdit from "./CardBoxEdit.vue";
 import CardBoxModalDelete from "./CardBoxDelete.vue";
-
 const props = defineProps({
   checkable: {
     type: Boolean,
@@ -29,7 +28,7 @@ const props = defineProps({
     type: Object,
     default: () => ({}),
   },
-  searchBranch: {
+  search: {
     type: Object,
     default: () => ({}),
   },
@@ -95,7 +94,6 @@ const checked = (isChecked, client) => {
 };
 const LoadView = async () => {
   items.value = await branchStore.listTodoList();
-  console.log(items.value);
 };
 const handleButtonClick = (bts) => {
   if (bts.label === "Thêm mới") {
@@ -149,22 +147,15 @@ watch(
   }
 );
 watch(
-  () => props.searchBranch,
+  () => props.search,
   async (newValue) => {
     const fetchData = async () => {
       try {
-        const result = await branchStore.searchBranch(newValue);
-        items.value = result;
-        const data = await branchStore.dataBranch();
-        for (const item of items.value) {
-          await branchStore.getLabelbranch(data, item);
-        }
-        currentPage.value = 0;
+        items.value = newValue;
       } catch (error) {
         console.error(error);
       }
     };
-
     await fetchData();
   }
 );
@@ -233,7 +224,7 @@ watch(
         <th>Ngày kết thúc</th>
       </tr>
     </thead>
-    <tbody>
+    <tbody v-if="items && items.length > 0">
       <tr
         v-for="(client, index) in itemsPaginated"
         :key="client.id"
@@ -278,8 +269,13 @@ watch(
         <td>
           {{ client.Owner }}
         </td>
-        <td>
-          {{ client.Status }}
+        <td
+          :class="{
+            'text-green-500': client.Status === 'Done',
+            'text-red-500': client.Status !== 'Done',
+          }"
+        >
+          <strong> {{ client.Status }} </strong>
         </td>
         <td>
           {{ new Date(client.StartDate).toLocaleDateString("vi-VN") }}

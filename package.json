@@ -14,9 +14,11 @@
     "chart.js": "^3.6.0",
     "numeral": "^2.0.6",
     "pinia": "^2.0.13",
+    "uuid": "^9.0.1",
     "vue": "^3.0.0",
     "vue-qrcode": "^2.2.0",
     "vue-router": "^4.0.0",
+    "vue-toastification": "^2.0.0-rc.5",
     "vuex": "^4.1.0"
   },
   "devDependencies": {
