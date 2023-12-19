@@ -6,10 +6,59 @@ export const useContractStore = defineStore("contract", {
   actions: {
     listTodoList: async () => {
       const rep = await sent(
-        "?channelid=mychannel&chaincodeid=basic&function=GetAllTodoItems",
+        "/query?channelid=mychannel&chaincodeid=basic&function=GetAllTodoItems",
         "GET"
       );
       return rep.data.data;
+    },
+    detailTodo: async (ID) => {
+      const rep = await sent(
+        `/query?channelid=mychannel&chaincodeid=basic&function=ReadTodoItem&args=${ID}`,
+        "GET"
+      );
+      return rep;
+    },
+    createTodoList: async (Data) => {
+      try {
+        const response = await sent(
+          "/invoke",
+          "POST",
+          Data,
+          "'Content-Type': 'application/json'"
+        );
+        return response;
+      } catch (error) {
+        console.error("Lỗi khi thêm mới:", error);
+        throw error;
+      }
+    },
+    updateTodoList: async (Data) => {
+      try {
+        const response = await sent(
+          "/invoke",
+          "PUT",
+          Data,
+          "'Content-Type': 'application/json'"
+        );
+        return response;
+      } catch (error) {
+        console.error("Lỗi khi thêm mới:", error);
+        throw error;
+      }
+    },
+    deleteTodoList: async (Data) => {
+      try {
+        const response = await sent(
+          "/delete",
+          "DELETE",
+          Data,
+          "'Content-Type': 'application/json'"
+        );
+        return response;
+      } catch (error) {
+        console.error("Lỗi khi thêm mới:", error);
+        throw error;
+      }
     },
   },
 });

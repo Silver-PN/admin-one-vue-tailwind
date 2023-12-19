@@ -5,7 +5,6 @@ import BaseLevel from "@/components/BaseLevel.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
 import BaseButton from "@/components/BaseButton.vue";
 import { useContractStore } from "@/stores/contract";
-import { useRouter } from "vue-router";
 import FormControl from "@/components/FormControl.vue";
 import {
   mdiChevronRight,
@@ -13,8 +12,10 @@ import {
   mdiPageLast,
   mdiPageFirst,
 } from "@mdi/js";
+import CardBoxModal from "./CardBoxModal.vue";
+import CardBoxEdit from "./CardBoxEdit.vue";
+import CardBoxModalDelete from "./CardBoxDelete.vue";
 
-const router = useRouter();
 const props = defineProps({
   checkable: {
     type: Boolean,
@@ -33,9 +34,16 @@ const props = defineProps({
     default: () => ({}),
   },
 });
-
+const priority = [
+  { id: 1, label: "Cao" },
+  { id: 2, label: "Trung bình" },
+  { id: 3, label: "Thấp" },
+];
 const items = ref([]);
 const branchStore = useContractStore();
+const isModalActive = ref(false);
+const isModalActiveDelete = ref(false);
+const isModalActiveEdit = ref(false);
 
 onMounted(async () => {
   items.value = await branchStore.listTodoList();
@@ -85,17 +93,28 @@ const checked = (isChecked, client) => {
     );
   }
 };
-
+const LoadView = async () => {
+  items.value = await branchStore.listTodoList();
+  console.log(items.value);
+};
 const handleButtonClick = (bts) => {
   if (bts.label === "Thêm mới") {
-    router.push("/newbranch");
+    // router.push("/newTodoList");
+    isModalActive.value = true;
   }
 };
+const tmp = ref();
 const handleButtonOperation = (button, client) => {
   if (button.name === "edit") {
-    router.push(`/informationbranch/${client.id}`);
+    tmp.value = client;
+    isModalActiveEdit.value = true;
+  }
+  if (button.name === "delete") {
+    tmp.value = client;
+    isModalActiveDelete.value = true;
   }
 };
+
 // const handleBranchCode = (client) => {
 //   router.push(`/informationbranch/${client.id}`);
 // };
@@ -152,13 +171,36 @@ watch(
 </script>
 
 <template>
+  <CardBoxModal
+    v-model="isModalActive"
+    title="Tạo mới công việc"
+    has-cancel
+    @confirm="LoadView"
+  >
+  </CardBoxModal>
+  <CardBoxModalDelete
+    v-model="isModalActiveDelete"
+    title="Xóa công việc"
+    has-cancel
+    :tmp="tmp"
+    @delete="LoadView"
+  >
+  </CardBoxModalDelete>
+  <CardBoxEdit
+    v-model="isModalActiveEdit"
+    title="Chi Tiết công việc"
+    has-cancel
+    :tmp="tmp"
+    @confirm="LoadView"
+  >
+  </CardBoxEdit>
   <div v-if="checkedRows.length" class="p-3 bg-gray-100/50 dark:bg-slate-800">
     <span
       v-for="checkedRow in checkedRows"
       :key="checkedRow.id"
       class="inline-block px-2 py-1 rounded-sm mr-2 text-sm bg-gray-100 dark:bg-slate-700"
     >
-      {{ checkedRow.Branch_Code }}
+      {{ checkedRow.ID }}
     </span>
   </div>
   <div class="flex justify-end space-x-2 my-1">
@@ -229,7 +271,9 @@ watch(
           >
         </td>
         <td>
-          {{ client.Priority }}
+          {{
+            priority.find((item) => item.id === client.Priority)?.label || ""
+          }}
         </td>
         <td>
           {{ client.Owner }}

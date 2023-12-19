@@ -1,5 +1,5 @@
 <script setup>
-import { computed, reactive } from "vue";
+import { computed, reactive, watch } from "vue";
 import { mdiClose } from "@mdi/js";
 import BaseButton from "@/components/BaseButton.vue";
 import BaseButtons from "@/components/BaseButtons.vue";
@@ -9,39 +9,7 @@ import CardBoxComponentTitle from "@/components/CardBoxComponentTitle.vue";
 import FormField from "./FormField.vue";
 import FormControl from "./FormControl.vue";
 import { useContractStore } from "@/stores/contract";
-import { v4 as uuidv4 } from "uuid";
-import { useToast } from "vue-toastification";
-const toast = useToast();
-const showNotification = (message, type) => {
-  const options = {
-    position: "top-center",
-    timeout: 3000,
-    closeOnClick: true,
-    pauseOnFocusLoss: true,
-    pauseOnHover: true,
-    draggable: true,
-    draggablePercent: 0.6,
-    showCloseButtonOnHover: false,
-    hideProgressBar: true,
-    closeButton: "button",
-    icon: true,
-    rtl: false,
-  };
 
-  switch (type) {
-    case "success":
-      toast.success(message, options);
-      break;
-    case "error":
-      toast.error(message, options);
-      break;
-    case "warning":
-      toast.warning(message, options);
-      break;
-    default:
-      break;
-  }
-};
 const branchStore = useContractStore();
 
 const priority = [
@@ -49,29 +17,10 @@ const priority = [
   { id: 2, label: "Trung bình" },
   { id: 3, label: "Thấp" },
 ];
-const selectedValues = reactive({});
-const setBranchData = (value) => {
-  if (value.StartDate && value.EndDate) {
-    const startDate = new Date(value.StartDate);
-    const formattedStartDate = startDate.toISOString();
-    const endDate = new Date(value.EndDate);
-    const formattedEndDate = endDate.toISOString();
-    return {
-      channelid: "mychannel",
-      chaincodeid: "basic",
-      function: "CreateTodoItem",
-      args: {
-        ID: uuidv4(),
-        Description: value.Description || "Test Todo Item 107",
-        Owner: "Silver",
-        Status: "Pending",
-        StartDate: formattedStartDate || "2023-01-01T00:00:00Z",
-        EndDate: formattedEndDate || "2023-01-07T00:00:00Z",
-        Priority: value.Priority ? value.Priority.id : 3,
-      },
-    };
-  }
-};
+const status = [
+  { id: 1, label: "Done" },
+  { id: 2, label: "Pending" },
+];
 const props = defineProps({
   title: {
     type: String,
@@ -90,10 +39,36 @@ const props = defineProps({
     type: [String, Number, Boolean],
     default: null,
   },
+  tmp: {
+    type: Object,
+    default: null,
+  },
 });
+const selectedValues = reactive({});
+const setBranchData = (value) => {
+  if (value.StartDate && value.EndDate) {
+    const startDate = new Date(value.StartDate);
+    const formattedStartDate = startDate.toISOString();
+    const endDate = new Date(value.EndDate);
+    const formattedEndDate = endDate.toISOString();
+    return {
+      channelid: "mychannel",
+      chaincodeid: "basic",
+      function: "UpdateTodoItem",
+      args: {
+        ID: value.ID,
+        Owner: value.Owner,
+        Description: value.Description,
+        Status: value.Status.label,
+        StartDate: formattedStartDate,
+        EndDate: formattedEndDate,
+        Priority: value.Priority.id,
+      },
+    };
+  }
+};
 
 const emit = defineEmits(["update:modelValue", "cancel", "confirm"]);
-
 const value = computed({
   get: () => props.modelValue,
   set: (value) => emit("update:modelValue", value),
@@ -104,11 +79,10 @@ const sleep = (milliseconds) => {
 const confirmCancel = async (mode) => {
   if (mode == "confirm") {
     const jsonData = setBranchData(selectedValues);
-    const rep = await branchStore.createTodoList(jsonData);
+    const rep = await branchStore.updateTodoList(jsonData);
     if (rep.data.status == "success") {
       value.value = false;
       await sleep(3000);
-      showNotification("Tạo nhân viên mới thành công!!!", "success");
       emit(mode);
     }
   } else {
@@ -126,6 +100,31 @@ window.addEventListener("keydown", (e) => {
     cancel();
   }
 });
+watch(
+  () => props.tmp,
+  async (newValue) => {
+    const mapPriority = (priorityId) => {
+      const priorityItem = priority.find((item) => item.id === priorityId);
+      return priorityItem
+        ? { id: priorityItem.id, label: priorityItem.label }
+        : null;
+    };
+    const mapStatus = (statusId) => {
+      const statusItem = status.find((item) => item.label == statusId);
+      return statusItem ? { id: statusItem.id, label: statusItem.label } : null;
+    };
+    const fetchData = async () => {
+      selectedValues.ID = newValue.ID || "";
+      selectedValues.Status = mapStatus(newValue.Status);
+      selectedValues.Owner = newValue.Owner || "";
+      selectedValues.StartDate = (newValue.StartDate || "").split("T")[0] || "";
+      selectedValues.EndDate = (newValue.EndDate || "").split("T")[0] || "";
+      selectedValues.Description = newValue.Description || "";
+      selectedValues.Priority = mapPriority(newValue.Priority);
+    };
+    await fetchData();
+  }
+);
 </script>
 
 <template>
@@ -145,7 +144,7 @@ window.addEventListener("keydown", (e) => {
           @click.prevent="cancel"
         />
       </CardBoxComponentTitle>
-
+      <strong> ID: {{ selectedValues.ID }}</strong>
       <div class="space-y-3">
         <table>
           <tbody>
@@ -171,16 +170,15 @@ window.addEventListener("keydown", (e) => {
             </tr>
             <tr style="background-color: transparent">
               <td class="table-cell-no-border">
-                <FormField label="Mô tả công việc">
+                <FormField label="Trạng thái">
                   <FormControl
-                    v-model="selectedValues.Description"
-                    type="textarea"
+                    v-model="selectedValues.Status"
+                    type="select"
                     icon=""
-                    placeholder="Vui lòng nhập mô tả"
+                    :options="status"
                   />
                 </FormField>
               </td>
-
               <td class="table-cell-no-border">
                 <FormField label="Mức độ ưu tiên">
                   <FormControl
@@ -192,13 +190,28 @@ window.addEventListener("keydown", (e) => {
                 </FormField>
               </td>
             </tr>
+            <tr style="background-color: transparent">
+              <td class="table-cell-no-border">
+                <FormField label="Mô tả công việc">
+                  <FormControl
+                    v-model="selectedValues.Description"
+                    type="textarea"
+                    icon=""
+                    placeholder="Vui lòng nhập mô tả"
+                  />
+                </FormField>
+              </td>
+              <td class="table-cell-no-border">
+                <strong> Owner: {{ selectedValues.Owner }}</strong>
+              </td>
+            </tr>
           </tbody>
         </table>
       </div>
 
       <template #footer>
         <BaseButtons>
-          <BaseButton :label="buttonLabel" :color="button" @click="confirm" />
+          <BaseButton label="Update" :color="button" @click="confirm" />
           <BaseButton
             v-if="hasCancel"
             label="Cancel"
